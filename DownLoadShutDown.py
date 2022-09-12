@@ -1,5 +1,6 @@
 # A program to auto shutdown the PC when a download is complete by using download speeds to guesstimate a time to shutdown the system
 # You can use -M at the end of the command to force Megabyte per second and not megabit
+# You can use -T at the end of the command to print the time to kill in h:m:s and seconds if -T is used as the fith command
 
 import os
 import sys
@@ -61,12 +62,19 @@ def main():
     s = GB2MB() / float(sys.argv[1]) if m_byte else GB2MB() /  MBPS2MB() 
     t = str(datetime.timedelta(seconds=s))
     
-    if os.name == "nt":
+    if len(sys.argv) == 5 and sys.argv[4].lower() == "-t":
 
-        os.system("shutdown -s -t {}".format(s))
+        print("Time to kill: {}".format(t))
+        print("Time to kill in seconds: {}".format(s))
 
     else:
-        os.system("sudo shutdown +{}".format(int(seconds2mins(s))))
+
+        if os.name == "nt":
+
+            os.system("shutdown -s -t {}".format(s))
+
+        else:
+            os.system("sudo shutdown +{}".format(int(seconds2mins(s))))
 
 main()
 
